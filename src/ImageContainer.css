@@ -1,0 +1,12 @@
+.ImageContainer {
+    width: 20%;
+    height: 20%;
+    border: 3px solid green;
+  }
+
+.Image {
+    padding: 5px;
+    object-fit: cover;
+    width: 150px;
+    height: 150px;
+  }
