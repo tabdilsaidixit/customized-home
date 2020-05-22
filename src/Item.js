@@ -1,31 +1,34 @@
 import React from 'react';
+import './Item.css';
+import './ImageContainer.css';
 
-const Item = (props) =>{
-    let needItem = null;
-    if(props.need){
-        needItem = <h2> Need </h2>;
-    }
-
-    let wantItem = null;
-    if(props.want){
-        wantItem = <h2> Want </h2>;
-    }
-
+const Item = (props) => {
+  
     return (
-    <div>
+        <div className="Item" styles={{ backgroundImage:`url(${props.image})` }}>
 
-        <h1> Image: {props.image}</h1>
-        <div>
-            <button onClick={props.needClick}> Need</button>
-            {needItem}
+    <img className="Image" src={require(`${props.image}`)} alt="Logo"/>
+            <div>
+                <label>
+                    Need it
+                    <input
+                        type="checkbox"
+                        checked={props.need}
+                        onChange={props.needClick} />
+                </label>
+            </div>
+            <div>
+            <label>
+                    Want it
+                    <input
+                        type="checkbox"
+                        checked={props.want}
+                        onChange={props.wantClick} />
+                </label>
+            </div>
+
+            <h1> <i>{props.title}</i> </h1>
         </div>
-        <div>
-            <button onClick={props.wantClick}> Want</button>
-            {wantItem}            
-        </div>
-        
-        <h3> <i>{props.title}</i> </h3>
-    </div>
     );
 }
 

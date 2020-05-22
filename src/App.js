@@ -3,6 +3,7 @@ import ReactScrollWheelHandler from "react-scroll-wheel-handler";
 import ImageContainer from "./ImageContainer";
 import Item from "./Item";
 import './App.css';
+import Needs from "./Needs";
 class App extends React.Component {
   state = {
     currentIndex: 0,
@@ -45,7 +46,7 @@ class App extends React.Component {
       return <Item
         key={itemIndex}
         title={item}
-        image={item}
+        image={`./assets/imgs/colors/${room.toLowerCase()}.PNG`}
         needClick={() => this.needHandler(room, item)}
         wantClick={() => this.wantHandler(room, item)}
         want={wanted.includes(item)}
@@ -78,7 +79,7 @@ class App extends React.Component {
     }
     this.setState({preferences:preferencesT});
   }
-  
+
   nextIndex = () => {
     const { rooms, currentIndex } = this.state;
     if (currentIndex === rooms.length - 1) {
@@ -119,8 +120,9 @@ class App extends React.Component {
           {this.getItems()}
         </div>
 
-
-
+        <div>
+          <Needs/>
+        </div>
       </div>
     );
   }
