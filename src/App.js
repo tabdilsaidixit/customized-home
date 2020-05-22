@@ -4,142 +4,126 @@ import ImageContainer from "./ImageContainer";
 import Item from "./Item";
 import './App.css';
 class App extends React.Component {
-    state = {
-        currentIndex: 0,
-        preferences:{
-          hall:{
-            needs:["table","fridge"],
-            wants:["table", "chair"]
-          },
-          kitchen:{
-            needs:["oven"],
-            wants:[ "mixer"]
-          },
-          bedroom:{
-            needs:["lamp", "bed"],
-            wants:["lamp", "bed", "blanket"]
-          },
-          outdoor:{
-            needs:["lawn"],
-            wants:["pool"]
-          }
-        },
-        rooms: ["hall", "kitchen", "bedroom", "outdoor"],
-        hall:["table", "chair","fridge"],
-        kitchen:["oven", "mixer"],
-        bedroom:["lamp", "bed","blanket"],
-        outdoor:["lawn", "pool"],
-        needed:{
-          hall:[true, false,true],
-          kitchen:[false, true],
-          bedroom:[false, true,false],
-          outdoor:[true, false]
-        },
-        wanted:{
-          hall:[false, true,false],
-          kitchen:[true, false],
-          bedroom:[false, false,true],
-          outdoor:[true, false]
-        },
-        want: true,
-        need: false
-    };
+  state = {
+    currentIndex: 0,
+    rooms: ["hall", "kitchen", "bedroom", "outdoor"],
+    items: {
+      hall: ["table", "chair", "fridge"],
+      kitchen: ["oven", "mixer"],
+      bedroom: ["lamp", "bed", "blanket"],
+      outdoor: ["lawn", "pool"]
+    },
 
-    getItems = () => {
-        let curIndex = this.state.currentIndex;
-        const room = this.state.rooms[curIndex];
-        const items = this.state[room];
-        const wanted = this.state.wanted[room];
-        const needed = this.state.needed[room];
-        const itemsComponents = items.map((item, itemIndex)=>{
-          return <Item
-          key={itemIndex}
-          title = {item} 
-          image = {item}
-          needClick = {()=>this.needHandler(room,itemIndex)} 
-          wantClick = {()=>this.wantHandler(room,itemIndex)}
-          want = {wanted[itemIndex]} 
-          need = {needed[itemIndex]}
-          />
+    preferences: {
+      hall: {
+        needs: ["table", "fridge"],
+        wants: ["table", "chair"]
+      },
+      kitchen: {
+        needs: ["oven"],
+        wants: ["mixer"]
+      },
+      bedroom: {
+        needs: ["lamp", "bed"],
+        wants: ["lamp", "bed", "blanket"]
+      },
+      outdoor: {
+        needs: [],
+        wants: []
+      }
+    },
+  };
 
-        });
-        return itemsComponents;
-    };
+  getItems = () => {
+    let curIndex = this.state.currentIndex;
+    const room = this.state.rooms[curIndex];
+    const items = this.state.items[room];
+    const wanted = this.state.preferences[room].wants;
+    const needed = this.state.preferences[room].needs;
 
-    needHandler = (room,itemIndex) =>{
-      console.log(this.state.needed[room][itemIndex]);
+    const itemsComponents = items.map((item, itemIndex) => {
+      return <Item
+        key={itemIndex}
+        title={item}
+        image={item}
+        needClick={() => this.needHandler(room, item)}
+        wantClick={() => this.wantHandler(room, item)}
+        want={wanted.includes(item)}
+        need={needed.includes(item)}
+      />
+
+    });
+    return itemsComponents;
+  };
+
+  needHandler = (room, item) => {
+    const needed = this.state.preferences[room].needs;
+    let preferencesT = {...this.state.preferences};
+    if(needed.includes(item)){
+      preferencesT[room].needs = preferencesT[room].needs.filter(e => e !== item);
+    }else{
+      preferencesT[room].needs.push(item);
+    }
+    this.setState({preferences:preferencesT});
+  }
+
+
+  wantHandler = (room, item) => {
+    const wanted = this.state.preferences[room].wants;
+    let preferencesT = {...this.state.preferences};
+    if(wanted.includes(item)){
+      preferencesT[room].wants = preferencesT[room].wants.filter(e => e !== item);
+    }else{
+      preferencesT[room].wants.push(item);
+    }
+    this.setState({preferences:preferencesT});
+  }
+  
+  nextIndex = () => {
+    const { rooms, currentIndex } = this.state;
+    if (currentIndex === rooms.length - 1) {
+      return this.setState({ currentIndex: 0 });
     }
 
-    // wantHandler = (room,itemIndex) =>{
-    //   this.setState({want: !this.state.want});
-    // }
+    return this.setState({
+      currentIndex: currentIndex + 1
+    });
+  };
 
-    wantHandler = (roomIndex,itemIndex) =>{
-      // const room = this.state.rooms[roomIndex];
-      // const wantedTemp = [...this.state.wanted[room]];
-      // wantedTemp[itemIndex] = !wantedTemp[itemIndex];
-      // this.setState({wanted: wantedTemp});
+  prevIndex = () => {
+    const { rooms, currentIndex } = this.state;
+    if (currentIndex === 0) {
+      return this.setState({
+        currentIndex: rooms.length - 1
+      });
     }
- 
 
-    
+    return this.setState({
+      currentIndex: currentIndex - 1
+    });
+  };
+
+
+  render() {
+    return (
+      <div>
+        <ReactScrollWheelHandler
+          upHandler={this.prevIndex}
+          downHandler={this.nextIndex}
+
+        >
+          <ImageContainer image={this.state.rooms[this.state.currentIndex]} />
+        </ReactScrollWheelHandler>
+
+        <div className="splitscreen">
+          {this.getItems()}
+        </div>
 
 
 
-    nextIndex = () => {
-        const { rooms, currentIndex } = this.state;
-        if (currentIndex === rooms.length - 1) {
-            return this.setState({ currentIndex: 0 });
-        }
- 
-        return this.setState({
-            currentIndex: currentIndex + 1
-        });
-    };
- 
-    prevIndex = () => {
-        const { rooms, currentIndex } = this.state;
-        if (currentIndex === 0) {
-            return this.setState({
-                currentIndex: rooms.length - 1
-            });
-        }
- 
-        return this.setState({
-            currentIndex: currentIndex - 1
-        });
-    };
-
-    
-    render() {
-       return (
-            <div>
-                <ReactScrollWheelHandler
-                    upHandler={this.prevIndex}
-                    downHandler={this.nextIndex}
-                   
-                >
-                  <ImageContainer image={this.state.rooms[this.state.currentIndex]}/>
-                </ReactScrollWheelHandler>
-{/*                 
-                <Item
-                 title = " Item Name" 
-                 image = {this.state.rooms[this.state.currentIndex]}
-                 needClick = {this.needHandler} 
-                 wantClick = {this.wantHandler}
-                 want = {this.state.want} 
-                 need = {this.state.need}
-                 /> */}
-
-                 <div className="splitscreen">
-                   {this.getItems()}
-                 </div>
-
-                 
-
-            </div>
-        );
-    }
+      </div>
+    );
+  }
 }
 
 export default App;
